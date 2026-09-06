@@ -1,32 +1,55 @@
-# React + TypeScript + Vite
+# One Turning World
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+An interactive study of light, distance, and place.
 
-Currently, two official plugins are available:
+One Turning World is a full-screen WebGL experience that follows the sun across five cities: Tokyo, Cairo, Paris, New York, and Ushuaia. As the world turns, each location appears in a different season and hour, connected by a single solar journey.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Experience
 
-## React Compiler
+- Explore a real-time 3D globe rendered with Three.js.
+- Move through the journey with the mouse wheel or keyboard.
+- Select a city from the solar navigation stepper.
+- Use `Arrow Up`, `Arrow Down`, `Page Up`, `Page Down`, or `Space` to navigate without a mouse.
+- Respects the system `prefers-reduced-motion` setting.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Built With
 
-## Expanding the Oxlint configuration
+- React and TypeScript
+- Vite
+- Three.js with React Three Fiber
+- GSAP and Motion
+- Tailwind CSS
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## Getting Started
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+Requirements: Node.js 18 or newer.
+
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Open the local URL printed by Vite in your browser.
+
+## Scripts
+
+```bash
+npm run dev       # Start the development server
+npm run build     # Type-check and create a production build
+npm run preview   # Preview the production build locally
+npm run lint      # Run Oxlint
+```
+
+## Project Structure
+
+```text
+src/
+├── components/   Globe canvas, city information, and navigation
+├── hooks/        Scroll state, globe setup, and choreography
+├── constants.ts  City data and motion configuration
+└── types.ts      Shared TypeScript types
+```
+
+## License
+
+No license has been specified yet.
