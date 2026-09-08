@@ -9,13 +9,13 @@ interface CanvasProps {
 
 export const Canvas: React.FC<CanvasProps> = ({ scrollState }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { sceneRef } = useGlobe({ 
+  const { scene } = useGlobe({ 
     scrollState, 
     canvasRef: canvasRef as React.RefObject<HTMLCanvasElement> 
   });
 
   // Initialize choreography after scene is created
-  useChoreography(sceneRef.current, scrollState);
+  useChoreography(scene, scrollState);
 
   // Handle window resize
   useEffect(() => {

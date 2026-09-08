@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import type { ScrollState } from '../types';
 import { latLonToCartesian, easeTowardValue } from '../utils';
@@ -11,6 +11,7 @@ interface GlobeProps {
 
 export function useGlobe({ scrollState, canvasRef }: GlobeProps) {
   const sceneRef = useRef<THREE.Scene | null>(null);
+  const [scene, setScene] = useState<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const globeRef = useRef<THREE.Group | null>(null);
@@ -38,6 +39,7 @@ export function useGlobe({ scrollState, canvasRef }: GlobeProps) {
     // Scene setup
     const scene = new THREE.Scene();
     sceneRef.current = scene;
+    setScene(scene);
     scene.background = new THREE.Color(0x000000);
 
     // Camera setup
@@ -345,5 +347,5 @@ export function useGlobe({ scrollState, canvasRef }: GlobeProps) {
     }
   }, [scrollState.cityIndex]);
 
-  return { sceneRef, cameraRef, rendererRef };
+  return { sceneRef, scene, cameraRef, rendererRef };
 }
