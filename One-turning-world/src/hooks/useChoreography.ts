@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import type { ScrollState } from '../types';
+import { LANDMARK_SPRITES } from '../constants';
 
 interface ChoreographyScene {
   tokyo: THREE.Group;
@@ -50,6 +51,11 @@ export function useChoreography(
       // Initialize Ushuaia - Aurora and ice
       createUshuaiaChoreography(choreographyRef.current.ushuaia, objectsRotationRef.current);
       scene.add(choreographyRef.current.ushuaia);
+
+      createLandmarkSprites(choreographyRef.current.cairo, 'cairo');
+      createLandmarkSprites(choreographyRef.current.paris, 'paris');
+      createLandmarkSprites(choreographyRef.current.newyork, 'newyork');
+      createLandmarkSprites(choreographyRef.current.ushuaia, 'ushuaia');
     }
 
     // Hide all choreography groups initially
@@ -179,20 +185,6 @@ function createCairoChoreography(group: THREE.Group, rotationMap: ObjectRotation
     });
   }
 
-  // Minaret-like forms (brass cones)
-  for (let i = 0; i < 3; i++) {
-    const minaretGeom = new THREE.ConeGeometry(0.1, 0.4, 16);
-    const minaretMat = new THREE.MeshBasicMaterial({ color: 0xcd7f32, wireframe: true });
-    const minaret = new THREE.Mesh(minaretGeom, minaretMat);
-
-    const angle = (i / 3) * Math.PI * 2;
-    minaret.position.set(Math.cos(angle) * 1.0, 0.3, Math.sin(angle) * 1.0);
-    minaret.rotation.x = Math.PI * 0.2;
-
-    group.add(minaret);
-    rotationMap.set(minaret, { x: 0, y: 0.08, z: 0 });
-  }
-
   // Warm stone facets
   for (let i = 0; i < 8; i++) {
     const facetGeom = new THREE.TetrahedronGeometry(0.15);
@@ -233,19 +225,6 @@ function createParisChoreography(group: THREE.Group, rotationMap: ObjectRotation
     rotationMap.set(ribbon, { x: 0.02, y: 0, z: 0.05 });
   }
 
-  // Abstract glass pyramid (Louvre)
-  const pyramidGeom = new THREE.TetrahedronGeometry(0.4);
-  const pyramidMat = new THREE.MeshBasicMaterial({
-    color: 0x87ceeb,
-    wireframe: true,
-    transparent: true,
-    opacity: 0.4,
-  });
-  const pyramid = new THREE.Mesh(pyramidGeom, pyramidMat);
-  pyramid.position.y = 0.1;
-  group.add(pyramid);
-  rotationMap.set(pyramid, { x: 0.02, y: 0.03, z: 0 });
-
   // Autumn leaves (billboard-like geometry)
   const leafCount = 20;
   for (let i = 0; i < leafCount; i++) {
@@ -272,29 +251,6 @@ function createParisChoreography(group: THREE.Group, rotationMap: ObjectRotation
 }
 
 function createNewYorkChoreography(group: THREE.Group, rotationMap: ObjectRotationMap) {
-  // Art Deco fans
-  for (let i = 0; i < 3; i++) {
-    const fanGroup = new THREE.Group();
-    const angle = (i / 3) * Math.PI * 2;
-    fanGroup.position.set(Math.cos(angle) * 0.9, 0, Math.sin(angle) * 0.9);
-
-    for (let j = 0; j < 8; j++) {
-      const sliceGeom = new THREE.PlaneGeometry(0.3, 0.2);
-      const sliceMat = new THREE.MeshBasicMaterial({
-        color: 0xffa500,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.5,
-      });
-      const slice = new THREE.Mesh(sliceGeom, sliceMat);
-      slice.rotation.z = (j / 8) * Math.PI * 0.5;
-      fanGroup.add(slice);
-    }
-
-    group.add(fanGroup);
-    rotationMap.set(fanGroup, { x: 0, y: 0.06, z: 0.02 });
-  }
-
   // Architectural lights (lines)
   for (let i = 0; i < 12; i++) {
     const lineGeom = new THREE.BufferGeometry().setAttribute(
@@ -415,6 +371,11 @@ function updateChoreographyPositions(
 ) {
   group.children.forEach((child) => {
     if (child instanceof THREE.Mesh || child instanceof THREE.Group) {
+      if (child.userData.landmarkSprite) {
+        updateLandmarkSprite(child, progress);
+        return;
+      }
+
       // Subtle scale and position based on progress
       const scale = 0.8 + progress * 0.4;
       child.scale.set(scale, scale, scale);
@@ -434,4 +395,68 @@ function updateChoreographyPositions(
       child.position.y = (child.userData?.originalY || 0) + Math.sin(progress * Math.PI) * 0.2;
     }
   });
+}
+
+function createLandmarkSprites(group: THREE.Group, city: string) {
+  const loader = new THREE.TextureLoader();
+
+  LANDMARK_SPRITES.filter((sprite) => sprite.city === city).forEach((config) => {
+    const material = new THREE.MeshBasicMaterial({
+      transparent: true,
+      opacity: 0,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    });
+    const sprite = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
+    sprite.visible = false;
+    sprite.userData = { landmarkSprite: config };
+    group.add(sprite);
+
+    loader.load(
+      config.asset,
+      (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace;
+        material.map = texture;
+        sprite.userData.aspect = texture.image.width / texture.image.height;
+        material.needsUpdate = true;
+        sprite.visible = true;
+      },
+      undefined,
+      () => {
+        // Keep optional generated assets quiet until they are added to public/sprites.
+        sprite.visible = false;
+      }
+    );
+  });
+}
+
+function updateLandmarkSprite(sprite: THREE.Object3D, progress: number) {
+  const config = sprite.userData.landmarkSprite;
+  if (!config) return;
+
+  const focalWindow = 0.2;
+  const focalProgress = config.focalPosition;
+  const position = progress <= focalProgress
+    ? interpolatePoint(config.entryPoint, config.focalPoint, progress / focalProgress)
+    : interpolatePoint(config.focalPoint, config.exitPoint, (progress - focalProgress) / (1 - focalProgress));
+  const orbit = Math.sin(progress * Math.PI) * config.orbitSize * 0.12 * config.direction;
+  sprite.position.set(position[0], position[1] + orbit, position[2]);
+
+  const distanceFromFocus = Math.abs(progress - focalProgress);
+  const focusAmount = Math.max(0, 1 - distanceFromFocus / focalWindow);
+  const scale = config.scale * (0.82 + focusAmount * 0.18);
+  const aspect = sprite.userData.aspect || 1;
+  sprite.scale.set(scale * aspect, scale, scale);
+  const material = (sprite as THREE.Mesh).material as THREE.MeshBasicMaterial;
+  material.opacity = config.opacity * (0.42 + focusAmount * 0.58);
+  sprite.rotation.z = Math.sin(progress * Math.PI * 2) * 0.025 * config.direction;
+}
+
+function interpolatePoint(start: readonly number[], end: readonly number[], amount: number) {
+  const t = Math.max(0, Math.min(1, amount));
+  return [
+    start[0] + (end[0] - start[0]) * t,
+    start[1] + (end[1] - start[1]) * t,
+    start[2] + (end[2] - start[2]) * t,
+  ];
 }

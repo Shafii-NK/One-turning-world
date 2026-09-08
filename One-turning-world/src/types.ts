@@ -24,4 +24,18 @@ export interface ChoreographyConfig {
   time: number; // delta time
 }
 
+export interface LandmarkSpriteConfig {
+  id: string;
+  city: CityType;
+  asset: string;
+  entryPoint: [number, number, number];
+  focalPoint: [number, number, number];
+  exitPoint: [number, number, number];
+  scale: number;
+  direction: 1 | -1;
+  orbitSize: number;
+  opacity: number;
+  focalPosition: number;
+}
+
 export type CityType = 'tokyo' | 'cairo' | 'paris' | 'newyork' | 'ushuaia';

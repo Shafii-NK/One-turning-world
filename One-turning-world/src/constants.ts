@@ -60,6 +60,54 @@ export const CITIES: Record<CityType, City> = {
 
 export const CITY_ARRAY: CityType[] = ['tokyo', 'cairo', 'paris', 'newyork', 'ushuaia'];
 
+export const LANDMARK_SPRITES = [
+  {
+    id: 'giza-pyramids', city: 'cairo', asset: '/sprites/cairo-giza-pyramids.webp',
+    entryPoint: [-1.2, -0.2, 0.15], focalPoint: [-0.52, 0.08, 0.7], exitPoint: [1.25, 0.35, 0.05],
+    scale: 0.72, direction: 1, orbitSize: 1.18, opacity: 0.96, focalPosition: 0.32,
+  },
+  {
+    id: 'great-sphinx', city: 'cairo', asset: '/sprites/cairo-great-sphinx.webp',
+    entryPoint: [1.2, -0.35, 0.2], focalPoint: [0.42, -0.08, 0.72], exitPoint: [-1.15, 0.28, 0.1],
+    scale: 0.58, direction: -1, orbitSize: 1.12, opacity: 0.96, focalPosition: 0.7,
+  },
+  {
+    id: 'eiffel-tower', city: 'paris', asset: '/sprites/paris-eiffel-tower.webp',
+    entryPoint: [-1.2, -0.1, 0.1], focalPoint: [-0.42, 0.08, 0.72], exitPoint: [1.15, 0.38, 0],
+    scale: 0.78, direction: 1, orbitSize: 1.2, opacity: 0.96, focalPosition: 0.3,
+  },
+  {
+    id: 'pont-alexandre-iii', city: 'paris', asset: '/sprites/paris-pont-alexandre-iii.webp',
+    entryPoint: [1.18, -0.3, 0.12], focalPoint: [0.38, -0.16, 0.74], exitPoint: [-1.2, 0.32, 0.05],
+    scale: 0.62, direction: -1, orbitSize: 1.16, opacity: 0.94, focalPosition: 0.72,
+  },
+  {
+    id: 'empire-state-building', city: 'newyork', asset: '/sprites/new-york-empire-state-building.webp',
+    entryPoint: [-1.2, -0.2, 0.08], focalPoint: [-0.48, 0.1, 0.72], exitPoint: [1.2, 0.36, 0.05],
+    scale: 0.76, direction: 1, orbitSize: 1.18, opacity: 0.96, focalPosition: 0.28,
+  },
+  {
+    id: 'statue-of-liberty', city: 'newyork', asset: '/sprites/new-york-statue-of-liberty.webp',
+    entryPoint: [1.2, -0.35, 0.1], focalPoint: [0.46, 0.02, 0.68], exitPoint: [-1.2, 0.3, 0.05],
+    scale: 0.62, direction: -1, orbitSize: 1.14, opacity: 0.95, focalPosition: 0.58,
+  },
+  {
+    id: 'brooklyn-bridge', city: 'newyork', asset: '/sprites/new-york-brooklyn-bridge.webp',
+    entryPoint: [-1.15, 0.32, 0.05], focalPoint: [0, -0.18, 0.75], exitPoint: [1.18, -0.25, 0.08],
+    scale: 0.68, direction: 1, orbitSize: 1.2, opacity: 0.94, focalPosition: 0.82,
+  },
+  {
+    id: 'les-eclaireurs', city: 'ushuaia', asset: '/sprites/ushuaia-les-eclaireurs.webp',
+    entryPoint: [-1.2, -0.18, 0.12], focalPoint: [-0.45, 0.06, 0.72], exitPoint: [1.2, 0.34, 0.04],
+    scale: 0.62, direction: 1, orbitSize: 1.16, opacity: 0.96, focalPosition: 0.34,
+  },
+  {
+    id: 'end-of-world-train', city: 'ushuaia', asset: '/sprites/ushuaia-end-of-world-train.webp',
+    entryPoint: [1.2, -0.32, 0.1], focalPoint: [0.42, -0.16, 0.7], exitPoint: [-1.18, 0.3, 0.05],
+    scale: 0.62, direction: -1, orbitSize: 1.18, opacity: 0.95, focalPosition: 0.68,
+  },
+] as const;
+
 // Solar curve Bézier path: M 52 106 Q 500 -76 948 106
 // ViewBox: 0 0 1000 126
 export const SOLAR_CURVE = {
